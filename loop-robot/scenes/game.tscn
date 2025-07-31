@@ -1,7 +1,9 @@
-[gd_scene load_steps=6 format=4 uid="uid://fk34b1turgan"]
+[gd_scene load_steps=8 format=4 uid="uid://fk34b1turgan"]
 
 [ext_resource type="Texture2D" uid="uid://cyg8wevfl4svr" path="res://textures/tile_map_atlas.png" id="1_uwrxv"]
 [ext_resource type="Texture2D" uid="uid://cinpnrr513wr2" path="res://sprites/robot.tres" id="2_yqjtg"]
+[ext_resource type="Texture2D" uid="uid://b7psmje3clsay" path="res://sprites/arrow_panel.tres" id="3_lbhrr"]
+[ext_resource type="Script" uid="uid://kmbvb2ytnkcl" path="res://scripts/program_tile.gd" id="3_lnu2h"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yqjtg"]
 texture = ExtResource("1_uwrxv")
@@ -14,18 +16,58 @@ sources/1 = SubResource("TileSetAtlasSource_yqjtg")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lnu2h"]
 size = Vector2(16, 16)
 
-[node name="Node" type="Node"]
+[node name="Root" type="Node"]
 
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
+[node name="World" type="Node2D" parent="."]
+scale = Vector2(1, 0.996736)
+
+[node name="TileMapLayer" type="TileMapLayer" parent="World"]
 tile_map_data = PackedByteArray("AAAAAP//AQAAAAAAAAABAP//AQAAAAAAAAACAP//AQAAAAAAAAADAP//AQAAAAAAAAAEAP//AQAAAAAAAAAFAP//AQAAAAAAAAAAAP7/AQAAAAAAAAAAAP3/AQAAAAAAAAAAAPz/AQAAAAAAAAAAAPv/AQAAAAAAAAAAAPr/AQAAAAAAAAAGAP//AQAAAAAAAAAHAP//AQAAAAAAAAAIAP//AQAAAAAAAAAJAP//AQAAAAAAAAAKAP//AQAAAAAAAAALAP//AQAAAAAAAAALAP7/AQAAAAAAAAALAPz/AQAAAAAAAAALAPv/AQAAAAAAAAALAP3/AQAAAAAAAAALAPr/AQAAAAAAAAAKAP7/AQABAAAAAAAJAP7/AQABAAAAAAAIAP7/AQABAAAAAAA=")
 tile_set = SubResource("TileSet_lnu2h")
 
-[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+[node name="CharacterBody2D" type="CharacterBody2D" parent="World"]
 position = Vector2(26, -26)
 
-[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
+[node name="Sprite2D" type="Sprite2D" parent="World/CharacterBody2D"]
+position = Vector2(-2, 3)
 texture = ExtResource("2_yqjtg")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/CharacterBody2D"]
 position = Vector2(-2, 2)
 shape = SubResource("RectangleShape2D_lnu2h")
+
+[node name="Camera2D" type="Camera2D" parent="World"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
+offset_left = 114.0
+offset_top = 4.0
+offset_right = 154.0
+offset_bottom = 44.0
+
+[node name="TextureButton" type="TextureButton" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("3_lbhrr")
+
+[node name="TextureButton2" type="TextureButton" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("3_lbhrr")
+
+[node name="TextureButton3" type="TextureButton" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("3_lbhrr")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_lbhrr")
+script = ExtResource("3_lnu2h")
+
+[node name="TextureRect2" type="TextureRect" parent="CanvasLayer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_lbhrr")
+script = ExtResource("3_lnu2h")
