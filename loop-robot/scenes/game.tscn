@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=4 uid="uid://fk34b1turgan"]
+
+[ext_resource type="Texture2D" uid="uid://cyg8wevfl4svr" path="res://textures/tile_map_atlas.png" id="1_uwrxv"]
+[ext_resource type="Texture2D" uid="uid://cinpnrr513wr2" path="res://sprites/robot.tres" id="2_yqjtg"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yqjtg"]
+texture = ExtResource("1_uwrxv")
+0:0/0 = 0
+1:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_lnu2h"]
+sources/1 = SubResource("TileSetAtlasSource_yqjtg")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lnu2h"]
+size = Vector2(16, 16)
+
+[node name="Node" type="Node"]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAP//AQAAAAAAAAABAP//AQAAAAAAAAACAP//AQAAAAAAAAADAP//AQAAAAAAAAAEAP//AQAAAAAAAAAFAP//AQAAAAAAAAAAAP7/AQAAAAAAAAAAAP3/AQAAAAAAAAAAAPz/AQAAAAAAAAAAAPv/AQAAAAAAAAAAAPr/AQAAAAAAAAAGAP//AQAAAAAAAAAHAP//AQAAAAAAAAAIAP//AQAAAAAAAAAJAP//AQAAAAAAAAAKAP//AQAAAAAAAAALAP//AQAAAAAAAAALAP7/AQAAAAAAAAALAPz/AQAAAAAAAAALAPv/AQAAAAAAAAALAP3/AQAAAAAAAAALAPr/AQAAAAAAAAAKAP7/AQABAAAAAAAJAP7/AQABAAAAAAAIAP7/AQABAAAAAAA=")
+tile_set = SubResource("TileSet_lnu2h")
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+position = Vector2(26, -26)
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
+texture = ExtResource("2_yqjtg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+position = Vector2(-2, 2)
+shape = SubResource("RectangleShape2D_lnu2h")
