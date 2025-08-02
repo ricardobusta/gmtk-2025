@@ -157,31 +157,3 @@ func animate_jump_arc(start: Vector2, end: Vector2, height: float, duration: flo
 		pos.y += arc_y  # Apply arc vertically
 		robot.position = pos
 		await get_tree().process_frame
-
-func tile_get_terrain_bit_from_direction(tile: TileData, neighbor: TileSet.CellNeighbor) -> int:
-	var rotated := neighbor
-	
-	print("transpose", tile.flip_h)
-	if tile.flip_h:
-		if rotated == TileSet.CellNeighbor.CELL_NEIGHBOR_LEFT_SIDE:
-			rotated = TileSet.CellNeighbor.CELL_NEIGHBOR_RIGHT_SIDE
-		elif rotated == TileSet.CellNeighbor.CELL_NEIGHBOR_RIGHT_SIDE:
-			rotated = TileSet.CellNeighbor.CELL_NEIGHBOR_LEFT_SIDE
-
-	print("transpose", tile.flip_v)
-	if tile.flip_v:
-		if rotated == TileSet.CellNeighbor.CELL_NEIGHBOR_TOP_SIDE:
-			rotated = TileSet.CellNeighbor.CELL_NEIGHBOR_BOTTOM_SIDE
-		elif rotated == TileSet.CellNeighbor.CELL_NEIGHBOR_BOTTOM_SIDE:
-			rotated = TileSet.CellNeighbor.CELL_NEIGHBOR_TOP_SIDE
-
-	print("transpose", tile.transpose)
-	if tile.transpose:
-		var transpose_map = {
-			TileSet.CellNeighbor.CELL_NEIGHBOR_TOP_SIDE: TileSet.CellNeighbor.CELL_NEIGHBOR_LEFT_SIDE,
-			TileSet.CellNeighbor.CELL_NEIGHBOR_BOTTOM_SIDE: TileSet.CellNeighbor.CELL_NEIGHBOR_RIGHT_SIDE,
-			TileSet.CellNeighbor.CELL_NEIGHBOR_LEFT_SIDE: TileSet.CellNeighbor.CELL_NEIGHBOR_TOP_SIDE,
-			TileSet.CellNeighbor.CELL_NEIGHBOR_RIGHT_SIDE: TileSet.CellNeighbor.CELL_NEIGHBOR_BOTTOM_SIDE
-		}
-		rotated = transpose_map[rotated]
-	return tile.get_terrain_peering_bit(rotated)
