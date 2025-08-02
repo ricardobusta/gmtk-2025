@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://b7bua6hp1ybu2"]
+
+[ext_resource type="Texture2D" uid="uid://cmsfeyf5aog44" path="res://sprites/jump_panel.tres" id="1_htodx"]
+[ext_resource type="Script" uid="uid://kmbvb2ytnkcl" path="res://scripts/program_tile.gd" id="2_xdnyp"]
+
+[node name="ProgramTile" type="TextureRect"]
+size_flags_vertical = 3
+texture = ExtResource("1_htodx")
+expand_mode = 2
+script = ExtResource("2_xdnyp")

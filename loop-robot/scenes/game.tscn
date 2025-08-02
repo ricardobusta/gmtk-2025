@@ -1,10 +1,13 @@
-[gd_scene load_steps=9 format=4 uid="uid://fk34b1turgan"]
+[gd_scene load_steps=12 format=4 uid="uid://fk34b1turgan"]
 
 [ext_resource type="Texture2D" uid="uid://cyg8wevfl4svr" path="res://textures/tile_map_atlas.png" id="1_uwrxv"]
 [ext_resource type="Texture2D" uid="uid://cinpnrr513wr2" path="res://sprites/robot.tres" id="2_yqjtg"]
-[ext_resource type="Script" uid="uid://c7m6c82vk8qyt" path="res://scripts/program_bar.gd" id="3_iywne"]
-[ext_resource type="Texture2D" uid="uid://b7psmje3clsay" path="res://sprites/arrow_panel.tres" id="3_lbhrr"]
+[ext_resource type="Script" uid="uid://c7m6c82vk8qyt" path="res://scripts/program_panel.gd" id="3_iywne"]
+[ext_resource type="Texture2D" uid="uid://b7psmje3clsay" path="res://sprites/move_panel.tres" id="3_lbhrr"]
+[ext_resource type="PackedScene" uid="uid://b7bua6hp1ybu2" path="res://prefabs/program_tile.tscn" id="4_gee14"]
 [ext_resource type="Script" uid="uid://cm678lxkjw6qi" path="res://scripts/program_button.gd" id="4_lbhrr"]
+[ext_resource type="Texture2D" uid="uid://co2l1rrygn6s8" path="res://sprites/flip_panel.tres" id="6_u5sy4"]
+[ext_resource type="Texture2D" uid="uid://cmsfeyf5aog44" path="res://sprites/jump_panel.tres" id="7_gee14"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yqjtg"]
 texture = ExtResource("1_uwrxv")
@@ -51,6 +54,7 @@ offset_top = -300.0
 grow_horizontal = 2
 grow_vertical = 0
 pivot_offset = Vector2(0, 42)
+horizontal_scroll_mode = 2
 vertical_scroll_mode = 0
 
 [node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/ProgramScrollContainer"]
@@ -58,6 +62,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 1
+script = ExtResource("3_iywne")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/ProgramScrollContainer/PanelContainer"]
 custom_minimum_size = Vector2(1920, 100)
@@ -65,7 +70,9 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 30
-script = ExtResource("3_iywne")
+
+[node name="ProgramTile" parent="CanvasLayer/ProgramScrollContainer/PanelContainer/HBoxContainer" instance=ExtResource("4_gee14")]
+layout_mode = 2
 
 [node name="ToolsScrollContainer" type="ScrollContainer" parent="CanvasLayer"]
 anchors_preset = 11
@@ -93,7 +100,7 @@ theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 3
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
+[node name="MoveCommand" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -101,72 +108,45 @@ texture = ExtResource("3_lbhrr")
 expand_mode = 4
 script = ExtResource("4_lbhrr")
 
-[node name="TextureRect2" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
+[node name="FlipCommand" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("6_u5sy4")
+expand_mode = 4
+script = ExtResource("4_lbhrr")
+
+[node name="JumpCommand" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("7_gee14")
+expand_mode = 4
+script = ExtResource("4_lbhrr")
+
+[node name="MoveCommand" type="TextureRect" parent="."]
 size_flags_horizontal = 3
 size_flags_vertical = 3
 texture = ExtResource("3_lbhrr")
 expand_mode = 4
 script = ExtResource("4_lbhrr")
 
-[node name="TextureRect3" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
-layout_mode = 2
+[node name="MoveCommand" type="TextureRect" parent="MoveCommand"]
+layout_mode = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 texture = ExtResource("3_lbhrr")
 expand_mode = 4
 script = ExtResource("4_lbhrr")
 
-[node name="TextureRect4" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
-layout_mode = 2
+[node name="MoveCommand2" type="TextureRect" parent="."]
 size_flags_horizontal = 3
 size_flags_vertical = 3
 texture = ExtResource("3_lbhrr")
 expand_mode = 4
 script = ExtResource("4_lbhrr")
 
-[node name="TextureRect5" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("3_lbhrr")
-expand_mode = 4
-script = ExtResource("4_lbhrr")
-
-[node name="TextureRect6" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("3_lbhrr")
-expand_mode = 4
-script = ExtResource("4_lbhrr")
-
-[node name="TextureRect7" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("3_lbhrr")
-expand_mode = 4
-script = ExtResource("4_lbhrr")
-
-[node name="TextureRect8" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("3_lbhrr")
-expand_mode = 4
-script = ExtResource("4_lbhrr")
-
-[node name="TextureRect9" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("3_lbhrr")
-expand_mode = 4
-script = ExtResource("4_lbhrr")
-
-[node name="TextureRect10" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
-layout_mode = 2
+[node name="MoveCommand3" type="TextureRect" parent="."]
 size_flags_horizontal = 3
 size_flags_vertical = 3
 texture = ExtResource("3_lbhrr")
