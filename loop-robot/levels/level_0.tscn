@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=4 uid="uid://cxppqi6h8cnhb"]
+
+[ext_resource type="Texture2D" uid="uid://cyg8wevfl4svr" path="res://textures/tile_map_atlas.png" id="1_eus5j"]
+[ext_resource type="Script" uid="uid://bsn81hrfrofi1" path="res://scripts/level_controller.gd" id="2_823pn"]
+[ext_resource type="Texture2D" uid="uid://batcurjr612d8" path="res://sprites/spawn_point.tres" id="3_iss0w"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yqjtg"]
+texture = ExtResource("1_eus5j")
+0:0/0 = 0
+0:0/0/terrain_set = 0
+0:0/0/terrain = 0
+0:0/0/terrains_peering_bit/right_side = 0
+0:0/0/terrains_peering_bit/bottom_side = 0
+0:0/0/terrains_peering_bit/left_side = 0
+0:0/0/terrains_peering_bit/top_side = 0
+1:0/0 = 0
+1:0/0/terrain_set = 0
+1:0/0/terrain = 0
+1:0/0/terrains_peering_bit/right_side = 0
+1:0/0/terrains_peering_bit/bottom_side = 0
+1:0/0/terrains_peering_bit/left_side = 0
+1:0/0/terrains_peering_bit/top_side = 1
+
+[sub_resource type="TileSet" id="TileSet_lnu2h"]
+terrain_set_0/mode = 2
+terrain_set_0/terrain_0/name = "solid"
+terrain_set_0/terrain_0/color = Color(0, 1, 1, 1)
+terrain_set_0/terrain_1/name = "spike"
+terrain_set_0/terrain_1/color = Color(1, 0, 0, 1)
+sources/1 = SubResource("TileSetAtlasSource_yqjtg")
+
+[node name="TileMapLayer" type="TileMapLayer" node_paths=PackedStringArray("start_position")]
+tile_map_data = PackedByteArray("AAAAAP//AQAAAAAAAAABAP//AQAAAAAAAAACAP//AQAAAAAAAAADAP//AQAAAAAAAAAEAP//AQAAAAAAAAAFAP//AQAAAAAAAAAAAP7/AQAAAAAAAAAAAP3/AQAAAAAAAAAAAPz/AQAAAAAAAAAAAPv/AQAAAAAAAAAAAPr/AQAAAAAAAAAGAP//AQAAAAAAAAAHAP//AQAAAAAAAAAIAP//AQAAAAAAAAAJAP//AQAAAAAAAAAKAP//AQAAAAAAAAALAP//AQAAAAAAAAALAP7/AQAAAAAAAAALAPz/AQAAAAAAAAALAPv/AQAAAAAAAAALAP3/AQAAAAAAAAALAPr/AQAAAAAAAAAKAP7/AQABAAAAAAAJAP7/AQABAAAAAAAIAP7/AQABAAAAAAA=")
+tile_set = SubResource("TileSet_lnu2h")
+script = ExtResource("2_823pn")
+start_position = NodePath("SpawnPoint")
+
+[node name="SpawnPoint" type="Sprite2D" parent="."]
+position = Vector2(24, -23)
+texture = ExtResource("3_iss0w")

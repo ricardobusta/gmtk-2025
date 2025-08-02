@@ -2,7 +2,7 @@ extends TextureRect
 
 class_name ProgramButton
 
-@export var command: ProgramCommands.Command = ProgramCommands.Command.NONE
+@export var command := ProgramCommands.Command.NONE
 
 func _get_drag_data(at_position: Vector2) -> Variant:
 	var data = {
@@ -16,12 +16,12 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	return data
 
 func create_drag_texture() -> void:
-	var drag_texture = TextureRect.new()
+	var drag_texture := TextureRect.new()
 	drag_texture.expand_mode = self.expand_mode
 	drag_texture.texture = self.texture
 	drag_texture.size = self.size
 	
-	var control = Control.new()
+	var control := Control.new()
 	control.add_child(drag_texture)
 	drag_texture.get_rect().position = -drag_texture.size/2
 	set_drag_preview(control)

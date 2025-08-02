@@ -1,7 +1,6 @@
-[gd_scene load_steps=19 format=4 uid="uid://fk34b1turgan"]
+[gd_scene load_steps=16 format=3 uid="uid://fk34b1turgan"]
 
 [ext_resource type="Script" uid="uid://b7sto4iec7u5u" path="res://scripts/game_controller.gd" id="1_dinhu"]
-[ext_resource type="Texture2D" uid="uid://cyg8wevfl4svr" path="res://textures/tile_map_atlas.png" id="1_uwrxv"]
 [ext_resource type="Texture2D" uid="uid://cinpnrr513wr2" path="res://sprites/robot.tres" id="2_yqjtg"]
 [ext_resource type="Texture2D" uid="uid://bq55lgedbtdt6" path="res://sprites/tool_panel.tres" id="3_gee14"]
 [ext_resource type="Script" uid="uid://c7m6c82vk8qyt" path="res://scripts/program_panel.gd" id="3_iywne"]
@@ -14,14 +13,6 @@
 [ext_resource type="Texture2D" uid="uid://sbg7chpolqig" path="res://sprites/button_play.tres" id="10_kvpfn"]
 [ext_resource type="Texture2D" uid="uid://b6vx2njoxgq5x" path="res://sprites/button_stop.tres" id="11_dinhu"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yqjtg"]
-texture = ExtResource("1_uwrxv")
-0:0/0 = 0
-1:0/0 = 0
-
-[sub_resource type="TileSet" id="TileSet_lnu2h"]
-sources/1 = SubResource("TileSetAtlasSource_yqjtg")
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lnu2h"]
 size = Vector2(16, 16)
 
@@ -30,17 +21,11 @@ size = Vector2(16, 16)
 [sub_resource type="Theme" id="Theme_vtaks"]
 PanelContainer/styles/panel = SubResource("StyleBoxEmpty_0tnpc")
 
-[node name="Root" type="Node"]
-
-[node name="GameController" type="Node" parent="."]
+[node name="Game" type="Node"]
 script = ExtResource("1_dinhu")
 
 [node name="World" type="Node2D" parent="."]
 scale = Vector2(1, 0.996736)
-
-[node name="TileMapLayer" type="TileMapLayer" parent="World"]
-tile_map_data = PackedByteArray("AAAAAP//AQAAAAAAAAABAP//AQAAAAAAAAACAP//AQAAAAAAAAADAP//AQAAAAAAAAAEAP//AQAAAAAAAAAFAP//AQAAAAAAAAAAAP7/AQAAAAAAAAAAAP3/AQAAAAAAAAAAAPz/AQAAAAAAAAAAAPv/AQAAAAAAAAAAAPr/AQAAAAAAAAAGAP//AQAAAAAAAAAHAP//AQAAAAAAAAAIAP//AQAAAAAAAAAJAP//AQAAAAAAAAAKAP//AQAAAAAAAAALAP//AQAAAAAAAAALAP7/AQAAAAAAAAALAPz/AQAAAAAAAAALAPv/AQAAAAAAAAALAP3/AQAAAAAAAAALAPr/AQAAAAAAAAAKAP7/AQABAAAAAAAJAP7/AQABAAAAAAAIAP7/AQABAAAAAAA=")
-tile_set = SubResource("TileSet_lnu2h")
 
 [node name="Camera2D" type="Camera2D" parent="World"]
 position = Vector2(72, -16.0524)
@@ -48,14 +33,14 @@ zoom = Vector2(5, 5)
 script = ExtResource("3_kvuet")
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="World"]
-position = Vector2(24, -16.0524)
+position = Vector2(24, -24.0786)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/CharacterBody2D"]
-position = Vector2(0, -7.04585)
+position = Vector2(0, 0.980351)
 texture = ExtResource("2_yqjtg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="World/CharacterBody2D"]
-position = Vector2(0, -8.04912)
+position = Vector2(0, -0.0229187)
 shape = SubResource("RectangleShape2D_lnu2h")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]

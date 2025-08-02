@@ -1,5 +1,7 @@
 extends PanelContainer
 
+class_name ProgramPanel
+
 @onready var layout = $HBoxContainer
 @onready var end_space = $HBoxContainer/EndSpace
 

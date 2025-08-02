@@ -1,23 +1,58 @@
 extends Node
 
-@onready var play_button: BaseButton = $"../CanvasLayer/UI/PlayButton"
-@onready var stop_button: BaseButton = $"../CanvasLayer/UI/StopButton"
-@onready var robot: CharacterBody2D = $"../World/CharacterBody2D"
-@onready var map = $"../World/TileMapLayer"
-@onready var program_container = $"../CanvasLayer/UI/ProgramScrollContainer/PanelContainer/HBoxContainer"
+class_name GameController
 
-const tile_size: int = 16
-const move_time: float = 0.5
-const flip_time: float = 0.2
-const jump_time: float = 0.5
+@onready var play_button: BaseButton = $"CanvasLayer/UI/PlayButton"
+@onready var stop_button: BaseButton = $"CanvasLayer/UI/StopButton"
+@onready var robot: CharacterBody2D = $"World/CharacterBody2D"
+@onready var program_container: Container = $"CanvasLayer/UI/ProgramScrollContainer/PanelContainer/HBoxContainer"
+@onready var world: Node2D = $World
+
+const tile_size := 16
+const move_time := 0.5
+const flip_time := 0.2
+const jump_time := 0.5
+
+const TILE_SOLID := "solid"
+const TILE_SPIKE := "spike"
+
+var is_interrupted := false
+var is_playing := false
+
+var map: LevelController
 
 func _ready() -> void:
 	play_button.button_down.connect(on_play_button_clicked)
+	stop_button.button_down.connect(on_stop_button_clicked)
+	
+	if not map:
+		printerr("Need to boot from a map")
+		return
+		
+	var start_pos = map.local_to_map(map.start_position.position)
+	robot.global_position = map.map_to_local(start_pos)
+	map.start_position.queue_free()
+
+func set_map(tile_map: TileMapLayer) -> void:
+	map = tile_map
+	map.add_child(self)
 
 func on_play_button_clicked() -> void:
+	if is_playing:
+		return
+		
 	print("Play")
-	var commands = get_program_commands()
+	is_playing = true
+	is_interrupted = false
+	var commands := get_program_commands()
+	while not is_interrupted:
+		await execute_commands(commands)
+
+func execute_commands(commands: Array[ProgramCommands.Command]):
 	for c in commands:
+		if self.is_interrupted:
+			break
+		print(ProgramCommands.Command.keys()[c])
 		match c:
 			ProgramCommands.Command.MOVE:
 				await execute_command_move()
@@ -25,22 +60,77 @@ func on_play_button_clicked() -> void:
 				await execute_command_flip()
 			ProgramCommands.Command.JUMP:
 				await execute_command_jump()
-		print(ProgramCommands.Command.keys()[c])
+				
+func on_stop_button_clicked() -> void:
+	if not is_playing:
+		return;
+		
+	print("Stop")
+	is_playing = false
+	stop_execution("Stop button clicked")
 
-func get_program_commands() -> Array:
-	var result := []
+func get_program_commands() -> Array[ProgramCommands.Command]:
+	var commands : Array[ProgramCommands.Command] = []
 
 	for child in program_container.get_children():
 		if child is ProgramTile:
-			var tile: ProgramTile = child
-			result.append(tile.command)
+			var tile:= child
+			commands.append(tile.command)
 
-	return result
+	return commands
 
+#func execute_command_move() -> void:
+	#var direction := Vector2i(robot.scale.x, 0)
+	#var target_grid_pos := map.local_to_map(robot.position) + direction
+#
+	#if is_tile_blocking(target_grid_pos):
+		#return  # Stop move if blocked or hit
+#
+	#await animate_to_position(target_grid_pos, move_time)
+	
 func execute_command_move() -> void:
-	var target_pos = robot.position + Vector2(tile_size * robot.scale.x, 0)
-	var duration = 0.2
-	await animate_to_position(target_pos, duration)
+	var direction = Vector2i(robot.scale.x, 0)
+	var current_grid_pos = map.local_to_map(robot.position)
+	var target_grid_pos = current_grid_pos + direction
+
+	var side_tile := map.get_cell_tile_data(target_grid_pos)
+
+	# check wall on tile we're moving to
+	if side_tile:
+		var facing_side := TileSet.CellNeighbor.CELL_NEIGHBOR_LEFT_SIDE if direction.x < 0 else TileSet.CellNeighbor.CELL_NEIGHBOR_RIGHT_SIDE
+		var facing_id := side_tile.get_terrain_peering_bit(facing_side)
+		var facing_name :=  map.tile_set.get_terrain_name(0, facing_id)
+
+		print("side tile: ", facing_name)
+
+		if facing_name == TILE_SOLID:
+			stop_execution("Hit wall in front")
+			return
+
+		if facing_name == TILE_SPIKE:
+			stop_execution("Hit spike wall!")
+			return
+
+ 	# check ground below the tile we're moving into
+	var ground_tile := map.get_cell_tile_data(target_grid_pos)
+	if ground_tile:
+		var facing_side := TileSet.CellNeighbor.CELL_NEIGHBOR_BOTTOM_SIDE
+		var facing_id := ground_tile.get_terrain_peering_bit(facing_side)
+		var facing_name := map.tile_set.get_terrain_name(0, facing_id)
+
+		print("down tile: ", facing_name)
+
+		if facing_name == TILE_SPIKE:
+			stop_execution("Stepped on spikes!")
+			return
+
+		if facing_name == TILE_SOLID:
+			# no problem
+			pass
+
+	# move into position
+	var target_pos = map.map_to_local(target_grid_pos)
+	await animate_to_position(target_pos, 0.2)
 
 func execute_command_flip() -> void:
 	await get_tree().create_timer(flip_time).timeout
@@ -48,10 +138,21 @@ func execute_command_flip() -> void:
 	await get_tree().create_timer(flip_time).timeout
 
 func execute_command_jump() -> void:
-	var start_pos = robot.position
-	var end_pos = robot.position + Vector2(tile_size * (2 * robot.scale.x), 0)
-	var jump_height = tile_size
+	var start_pos:= robot.position
+	var end_pos:= robot.position + Vector2(tile_size * (2 * robot.scale.x), 0)
+	var jump_height:= tile_size
 	await animate_jump_arc(start_pos, end_pos, jump_height, jump_time)
+
+func stop_execution(reason: String) -> void:
+	self.is_interrupted = true
+	print("Execution Interrupted: %s", reason)
+
+func is_tile_blocking(grid_pos: Vector2i) -> bool:
+	var tile_data = map.get_cell_tile_data(grid_pos)
+	if tile_data == null:
+		return false
+
+	return false
 
 func animate_to_position(target: Vector2, duration: float) -> void:
 	var elapsed := 0.0
@@ -65,9 +166,9 @@ func animate_jump_arc(start: Vector2, end: Vector2, height: float, duration: flo
 	var elapsed := 0.0
 	while elapsed < duration:
 		elapsed += get_process_delta_time()
-		var t = elapsed / duration
-		var arc_y = -4 * height * t * (1 - t)
-		var pos = start.lerp(end, t)
+		var t := elapsed / duration
+		var arc_y := -4 * height * t * (1 - t)
+		var pos := start.lerp(end, t)
 		pos.y += arc_y  # Apply arc vertically
 		robot.position = pos
 		await get_tree().process_frame
