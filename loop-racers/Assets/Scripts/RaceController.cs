@@ -9,6 +9,7 @@ public class RaceController : MonoBehaviour
     [SerializeField] private float acceleration = 5.0f;
     [SerializeField] private float drag = 10.0f;
     [SerializeField] private float maxSpeed = 100;
+    [SerializeField] private float offset = 0;
 
 
     private float _speed;
@@ -40,6 +41,7 @@ public class RaceController : MonoBehaviour
         car.transform.position = spline.EvaluatePosition(_parametricPosition);
         var splineTan = spline.EvaluateTangent(_parametricPosition);
         var tan = new Vector3(splineTan.x, splineTan.y, splineTan.z);
-        car.transform.LookAt(car.transform.position + tan);
+        car.transform.LookAt(car.transform.position + tan, Vector3.up);
+        car.transform.position += car.transform.right * offset;
     }
 }
