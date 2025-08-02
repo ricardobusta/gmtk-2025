@@ -45,6 +45,10 @@ func on_play_button_clicked() -> void:
 	is_playing = true
 	is_interrupted = false
 	var commands := get_program_commands()
+	
+	if len(commands) == 0:
+		return
+	
 	while not is_interrupted:
 		await execute_commands(commands)
 
@@ -78,55 +82,31 @@ func get_program_commands() -> Array[ProgramCommands.Command]:
 			commands.append(tile.command)
 
 	return commands
-
-#func execute_command_move() -> void:
-	#var direction := Vector2i(robot.scale.x, 0)
-	#var target_grid_pos := map.local_to_map(robot.position) + direction
-#
-	#if is_tile_blocking(target_grid_pos):
-		#return  # Stop move if blocked or hit
-#
-	#await animate_to_position(target_grid_pos, move_time)
 	
 func execute_command_move() -> void:
 	var direction = Vector2i(robot.scale.x, 0)
 	var current_grid_pos = map.local_to_map(robot.position)
 	var target_grid_pos = current_grid_pos + direction
 
-	var side_tile := map.get_cell_tile_data(target_grid_pos)
+	var side_terrain = map.get_terrain_at_tile(target_grid_pos,
+	 	LevelController.TileSide.LEFT 
+		if direction.x < 0 
+		else LevelController.TileSide.RIGHT)
+#
+	if side_terrain == TILE_SOLID:
+		stop_execution("Hit wall in front")
 
-	# check wall on tile we're moving to
-	if side_tile:
-		var facing_side := TileSet.CellNeighbor.CELL_NEIGHBOR_LEFT_SIDE if direction.x < 0 else TileSet.CellNeighbor.CELL_NEIGHBOR_RIGHT_SIDE
-		var facing_id := side_tile.get_terrain_peering_bit(facing_side)
-		var facing_name :=  map.tile_set.get_terrain_name(0, facing_id)
+	if side_terrain == TILE_SPIKE:
+		stop_execution("Hit spike wall!")
 
-		print("side tile: ", facing_name)
-
-		if facing_name == TILE_SOLID:
-			stop_execution("Hit wall in front")
-			return
-
-		if facing_name == TILE_SPIKE:
-			stop_execution("Hit spike wall!")
-			return
-
- 	# check ground below the tile we're moving into
-	var ground_tile := map.get_cell_tile_data(target_grid_pos)
-	if ground_tile:
-		var facing_side := TileSet.CellNeighbor.CELL_NEIGHBOR_BOTTOM_SIDE
-		var facing_id := ground_tile.get_terrain_peering_bit(facing_side)
-		var facing_name := map.tile_set.get_terrain_name(0, facing_id)
-
-		print("down tile: ", facing_name)
-
-		if facing_name == TILE_SPIKE:
-			stop_execution("Stepped on spikes!")
-			return
-
-		if facing_name == TILE_SOLID:
-			# no problem
-			pass
+	var ground_terrain := map.get_terrain_at_tile(target_grid_pos - Vector2i.UP,
+		 	LevelController.TileSide.TOP)
+	
+	if ground_terrain == TILE_SPIKE:
+		stop_execution("Stepped on spikes!")
+		
+	if ground_terrain == "":
+		stop_execution("Hole!")
 
 	# move into position
 	var target_pos = map.map_to_local(target_grid_pos)
@@ -145,7 +125,7 @@ func execute_command_jump() -> void:
 
 func stop_execution(reason: String) -> void:
 	self.is_interrupted = true
-	print("Execution Interrupted: %s", reason)
+	print("Execution Interrupted: ", reason)
 
 func is_tile_blocking(grid_pos: Vector2i) -> bool:
 	var tile_data = map.get_cell_tile_data(grid_pos)
@@ -172,3 +152,31 @@ func animate_jump_arc(start: Vector2, end: Vector2, height: float, duration: flo
 		pos.y += arc_y  # Apply arc vertically
 		robot.position = pos
 		await get_tree().process_frame
+
+func tile_get_terrain_bit_from_direction(tile: TileData, neighbor: TileSet.CellNeighbor) -> int:
+	var rotated := neighbor
+	
+	print("transpose", tile.flip_h)
+	if tile.flip_h:
+		if rotated == TileSet.CellNeighbor.CELL_NEIGHBOR_LEFT_SIDE:
+			rotated = TileSet.CellNeighbor.CELL_NEIGHBOR_RIGHT_SIDE
+		elif rotated == TileSet.CellNeighbor.CELL_NEIGHBOR_RIGHT_SIDE:
+			rotated = TileSet.CellNeighbor.CELL_NEIGHBOR_LEFT_SIDE
+
+	print("transpose", tile.flip_v)
+	if tile.flip_v:
+		if rotated == TileSet.CellNeighbor.CELL_NEIGHBOR_TOP_SIDE:
+			rotated = TileSet.CellNeighbor.CELL_NEIGHBOR_BOTTOM_SIDE
+		elif rotated == TileSet.CellNeighbor.CELL_NEIGHBOR_BOTTOM_SIDE:
+			rotated = TileSet.CellNeighbor.CELL_NEIGHBOR_TOP_SIDE
+
+	print("transpose", tile.transpose)
+	if tile.transpose:
+		var transpose_map = {
+			TileSet.CellNeighbor.CELL_NEIGHBOR_TOP_SIDE: TileSet.CellNeighbor.CELL_NEIGHBOR_LEFT_SIDE,
+			TileSet.CellNeighbor.CELL_NEIGHBOR_BOTTOM_SIDE: TileSet.CellNeighbor.CELL_NEIGHBOR_RIGHT_SIDE,
+			TileSet.CellNeighbor.CELL_NEIGHBOR_LEFT_SIDE: TileSet.CellNeighbor.CELL_NEIGHBOR_TOP_SIDE,
+			TileSet.CellNeighbor.CELL_NEIGHBOR_RIGHT_SIDE: TileSet.CellNeighbor.CELL_NEIGHBOR_BOTTOM_SIDE
+		}
+		rotated = transpose_map[rotated]
+	return tile.get_terrain_peering_bit(rotated)
