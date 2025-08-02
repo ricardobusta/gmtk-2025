@@ -10,9 +10,10 @@ class_name GameController
 
 const tile_size := 16
 const move_time := 0.5
-const flip_time := 0.2
-const jump_time := 0.5
+const flip_time := move_time/2
+const jump_time := move_time
 
+const TILE_EMPTY := "empty"
 const TILE_SOLID := "solid"
 const TILE_SPIKE := "spike"
 
@@ -104,13 +105,13 @@ func execute_command_move() -> void:
 		stop_execution("Hit spike wall!")
 		return
 
-	var ground_terrain := map.get_terrain_at_tile(target_grid_pos - Vector2i.UP,
+	var ground_terrain := map.get_terrain_at_tile(target_grid_pos + Vector2i.DOWN,
 		 	LevelController.TileSide.TOP)
 	
 	if ground_terrain == TILE_SPIKE:
 		stop_execution("Stepped on spikes!")
 		
-	if ground_terrain == "":
+	if ground_terrain == TILE_EMPTY:
 		stop_execution("Hole!")
 
 	# move into position
@@ -123,21 +124,11 @@ func execute_command_flip() -> void:
 	await get_tree().create_timer(flip_time).timeout
 
 func execute_command_jump() -> void:
-	var start_pos:= robot.position
-	var end_pos:= robot.position + Vector2(tile_size * (2 * robot.scale.x), 0)
-	var jump_height:= tile_size
-	await animate_jump_arc(start_pos, end_pos, jump_height, jump_time)
+	await execute_command_move()
 
 func stop_execution(reason: String) -> void:
 	self.is_interrupted = true
 	print("Execution Interrupted: ", reason)
-
-func is_tile_blocking(grid_pos: Vector2i) -> bool:
-	var tile_data = map.get_cell_tile_data(grid_pos)
-	if tile_data == null:
-		return false
-
-	return false
 
 func animate_to_position(target: Vector2, duration: float) -> void:
 	var elapsed := 0.0
