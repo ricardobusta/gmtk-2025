@@ -1,8 +1,13 @@
 extends TextureRect
 
+class_name ProgramTile
+
+var command: String = "default"
+
 func _get_drag_data(at_position: Vector2) -> Variant:
 	var data = {
 		type = "command",
+		command = command,
 		texture = self.texture
 	}
 
@@ -30,8 +35,9 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 func _drop_data(at_position: Vector2, data: Variant) -> void:
 	if data.get("type", "") != "command":
 		return
-	var new_button: TextureRect = preload("res://prefabs/program_tile.tscn").instantiate()
+	var new_button: ProgramTile = preload("res://prefabs/program_tile.tscn").instantiate()
 	new_button.texture = data["texture"]
+	new_button.command = data["command"]
 	get_parent().add_child(new_button)
 	
 	var index = get_index()

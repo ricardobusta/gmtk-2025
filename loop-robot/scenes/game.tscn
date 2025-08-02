@@ -1,13 +1,16 @@
-[gd_scene load_steps=12 format=4 uid="uid://fk34b1turgan"]
+[gd_scene load_steps=17 format=4 uid="uid://fk34b1turgan"]
 
 [ext_resource type="Texture2D" uid="uid://cyg8wevfl4svr" path="res://textures/tile_map_atlas.png" id="1_uwrxv"]
 [ext_resource type="Texture2D" uid="uid://cinpnrr513wr2" path="res://sprites/robot.tres" id="2_yqjtg"]
+[ext_resource type="Texture2D" uid="uid://bq55lgedbtdt6" path="res://sprites/tool_panel.tres" id="3_gee14"]
 [ext_resource type="Script" uid="uid://c7m6c82vk8qyt" path="res://scripts/program_panel.gd" id="3_iywne"]
 [ext_resource type="Texture2D" uid="uid://b7psmje3clsay" path="res://sprites/move_panel.tres" id="3_lbhrr"]
-[ext_resource type="PackedScene" uid="uid://b7bua6hp1ybu2" path="res://prefabs/program_tile.tscn" id="4_gee14"]
 [ext_resource type="Script" uid="uid://cm678lxkjw6qi" path="res://scripts/program_button.gd" id="4_lbhrr"]
 [ext_resource type="Texture2D" uid="uid://co2l1rrygn6s8" path="res://sprites/flip_panel.tres" id="6_u5sy4"]
 [ext_resource type="Texture2D" uid="uid://cmsfeyf5aog44" path="res://sprites/jump_panel.tres" id="7_gee14"]
+[ext_resource type="Theme" uid="uid://dip7t4oahfc3b" path="res://themes/toolbox_title.theme" id="9_0tnpc"]
+[ext_resource type="Texture2D" uid="uid://sbg7chpolqig" path="res://sprites/button_play.tres" id="10_kvpfn"]
+[ext_resource type="Texture2D" uid="uid://b6vx2njoxgq5x" path="res://sprites/button_stop.tres" id="11_dinhu"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yqjtg"]
 texture = ExtResource("1_uwrxv")
@@ -19,6 +22,11 @@ sources/1 = SubResource("TileSetAtlasSource_yqjtg")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lnu2h"]
 size = Vector2(16, 16)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0tnpc"]
+
+[sub_resource type="Theme" id="Theme_vtaks"]
+PanelContainer/styles/panel = SubResource("StyleBoxEmpty_0tnpc")
 
 [node name="Root" type="Node"]
 
@@ -45,36 +53,39 @@ zoom = Vector2(5, 5)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="ProgramScrollContainer" type="ScrollContainer" parent="CanvasLayer"]
-anchors_preset = 12
-anchor_top = 1.0
+[node name="UI" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -300.0
 grow_horizontal = 2
-grow_vertical = 0
-pivot_offset = Vector2(0, 42)
-horizontal_scroll_mode = 2
-vertical_scroll_mode = 0
-
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/ProgramScrollContainer"]
-layout_mode = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-mouse_filter = 1
-script = ExtResource("3_iywne")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/ProgramScrollContainer/PanelContainer"]
-custom_minimum_size = Vector2(1920, 100)
+[node name="Control" type="Control" parent="CanvasLayer/UI"]
+anchors_preset = 0
+offset_left = 1420.0
+offset_right = 1920.0
+offset_bottom = 780.0
+
+[node name="ToolsBackground" type="NinePatchRect" parent="CanvasLayer/UI"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_constants/separation = 30
+offset_left = 1420.0
+offset_right = 1520.0
+offset_bottom = 156.0
+scale = Vector2(5, 5)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("3_gee14")
+region_rect = Rect2(0, 0, 32, 32)
+patch_margin_left = 9
+patch_margin_top = 9
+patch_margin_right = 9
+patch_margin_bottom = 9
 
-[node name="ProgramTile" parent="CanvasLayer/ProgramScrollContainer/PanelContainer/HBoxContainer" instance=ExtResource("4_gee14")]
-layout_mode = 2
-
-[node name="ToolsScrollContainer" type="ScrollContainer" parent="CanvasLayer"]
+[node name="ToolsScrollContainer" type="ScrollContainer" parent="CanvasLayer/UI"]
+layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
@@ -85,22 +96,29 @@ grow_horizontal = 0
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/ToolsScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/UI/ToolsScrollContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-mouse_filter = 1
+size_flags_horizontal = 6
+size_flags_vertical = 2
 
-[node name="GridContainer" type="GridContainer" parent="CanvasLayer/ToolsScrollContainer/PanelContainer"]
-custom_minimum_size = Vector2(366.13, 0)
+[node name="Label" type="Label" parent="CanvasLayer/UI/ToolsScrollContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_vertical = 0
+theme = ExtResource("9_0tnpc")
+text = "Toolbox"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/UI/ToolsScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 3
 
-[node name="MoveCommand" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
+[node name="MoveCommand" type="TextureRect" parent="CanvasLayer/UI/ToolsScrollContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -108,7 +126,7 @@ texture = ExtResource("3_lbhrr")
 expand_mode = 4
 script = ExtResource("4_lbhrr")
 
-[node name="FlipCommand" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
+[node name="FlipCommand" type="TextureRect" parent="CanvasLayer/UI/ToolsScrollContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -116,13 +134,104 @@ texture = ExtResource("6_u5sy4")
 expand_mode = 4
 script = ExtResource("4_lbhrr")
 
-[node name="JumpCommand" type="TextureRect" parent="CanvasLayer/ToolsScrollContainer/PanelContainer/GridContainer"]
+[node name="JumpCommand" type="TextureRect" parent="CanvasLayer/UI/ToolsScrollContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 texture = ExtResource("7_gee14")
 expand_mode = 4
 script = ExtResource("4_lbhrr")
+
+[node name="ProgramBackground" type="NinePatchRect" parent="CanvasLayer/UI"]
+layout_mode = 2
+offset_top = 780.0
+offset_right = 284.0
+offset_bottom = 840.0
+scale = Vector2(5, 5)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("3_gee14")
+region_rect = Rect2(0, 0, 32, 32)
+patch_margin_left = 9
+patch_margin_top = 9
+patch_margin_right = 9
+patch_margin_bottom = 9
+
+[node name="ProgramScrollContainer" type="ScrollContainer" parent="CanvasLayer/UI"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -300.0
+offset_right = -500.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(0, 42)
+horizontal_scroll_mode = 2
+vertical_scroll_mode = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/UI/ProgramScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
+theme = SubResource("Theme_vtaks")
+script = ExtResource("3_iywne")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/UI/ProgramScrollContainer/PanelContainer"]
+custom_minimum_size = Vector2(1420, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 30
+
+[node name="StartSpace" type="Control" parent="CanvasLayer/UI/ProgramScrollContainer/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(34.45, 120)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/UI/ProgramScrollContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme = ExtResource("9_0tnpc")
+text = "Program:"
+
+[node name="EndSpace" type="Control" parent="CanvasLayer/UI/ProgramScrollContainer/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(34.45, 0)
+layout_mode = 2
+
+[node name="ControlBackground" type="NinePatchRect" parent="CanvasLayer/UI"]
+layout_mode = 2
+offset_left = 1420.0
+offset_top = 780.0
+offset_right = 1520.0
+offset_bottom = 840.0
+scale = Vector2(5, 5)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("3_gee14")
+region_rect = Rect2(0, 0, 32, 32)
+patch_margin_left = 9
+patch_margin_top = 9
+patch_margin_right = 9
+patch_margin_bottom = 9
+
+[node name="PlayButton" type="TextureButton" parent="CanvasLayer/UI"]
+layout_mode = 0
+offset_left = 1513.0
+offset_top = 878.0
+offset_right = 1633.0
+offset_bottom = 998.0
+texture_normal = ExtResource("10_kvpfn")
+stretch_mode = 0
+
+[node name="StopButton" type="TextureButton" parent="CanvasLayer/UI"]
+layout_mode = 0
+offset_left = 1725.0
+offset_top = 879.0
+offset_right = 1845.0
+offset_bottom = 999.0
+texture_normal = ExtResource("11_dinhu")
+stretch_mode = 0
 
 [node name="MoveCommand" type="TextureRect" parent="."]
 size_flags_horizontal = 3

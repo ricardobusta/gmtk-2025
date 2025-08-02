@@ -5,6 +5,7 @@
 
 [node name="ProgramTile" type="TextureRect"]
 size_flags_vertical = 3
+mouse_filter = 0
 texture = ExtResource("1_htodx")
 expand_mode = 2
 script = ExtResource("2_xdnyp")

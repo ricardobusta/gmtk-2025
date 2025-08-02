@@ -1,8 +1,13 @@
 extends TextureRect
 
+class_name ProgramButton
+
+@export var command: String = "default"
+
 func _get_drag_data(at_position: Vector2) -> Variant:
 	var data = {
 		type = "command",
+		command = self.command,
 		texture = self.texture
 	}
 
