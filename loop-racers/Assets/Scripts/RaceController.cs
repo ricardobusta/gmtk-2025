@@ -4,44 +4,63 @@ using UnityEngine.Splines;
 
 public class RaceController : MonoBehaviour
 {
-    [SerializeField] private GameObject car;
-    [SerializeField] private SplineContainer spline;
+    [Serializable]
+    public class PlayerData
+    {
+        public GameObject car;
+        public SplineContainer spline;
+        public KeyCode key;
+        public float offset;
+
+        [NonSerialized] public float Speed;
+        [NonSerialized] public float ParametricPosition;
+        [NonSerialized] public float MeterToSplineUnit;
+
+        public void OnUpdate(RaceController raceController)
+        {
+            if (Input.GetKey(key))
+            {
+                Speed += raceController.acceleration * Time.deltaTime;
+            }
+            else
+            {
+                Speed -= raceController.drag * Time.deltaTime;
+            }
+            
+            Speed = Mathf.Clamp(Speed, 0, raceController.maxSpeed);
+
+            ParametricPosition += MeterToSplineUnit * Speed * Time.deltaTime;
+            ParametricPosition %= 1.0f;
+
+            car.transform.position = spline.EvaluatePosition(ParametricPosition);
+            var splineTan = spline.EvaluateTangent(ParametricPosition);
+            var tan = new Vector3(splineTan.x, splineTan.y, splineTan.z);
+            car.transform.LookAt(car.transform.position + tan, Vector3.up);
+            car.transform.position += car.transform.right * offset;
+        }
+    }
+
     [SerializeField] private float acceleration = 5.0f;
     [SerializeField] private float drag = 10.0f;
     [SerializeField] private float maxSpeed = 100;
     [SerializeField] private float offset = 0;
 
-
-    private float _speed;
-    private float _meterToSplineUnit;
-    private float _parametricPosition;
+    [SerializeField] private PlayerData[] players;
 
     private void Start()
     {
-        _meterToSplineUnit = 1.0f / spline.CalculateLength();
-        _parametricPosition = 0;
+        foreach (var player in players)
+        {
+            player.ParametricPosition = 0;
+            player.MeterToSplineUnit = 1.0f / player.spline.CalculateLength();
+        }
     }
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
+        foreach (var player in players)
         {
-            _speed += acceleration * Time.deltaTime;
+            player.OnUpdate(this);
         }
-        else
-        {
-            _speed -= drag * Time.deltaTime;
-        }
-
-        _speed = Mathf.Clamp(_speed, 0, maxSpeed);
-
-        _parametricPosition += _meterToSplineUnit * _speed * Time.deltaTime;
-        _parametricPosition %= 1.0f;
-
-        car.transform.position = spline.EvaluatePosition(_parametricPosition);
-        var splineTan = spline.EvaluateTangent(_parametricPosition);
-        var tan = new Vector3(splineTan.x, splineTan.y, splineTan.z);
-        car.transform.LookAt(car.transform.position + tan, Vector3.up);
-        car.transform.position += car.transform.right * offset;
     }
 }
