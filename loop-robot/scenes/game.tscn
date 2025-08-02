@@ -1,10 +1,11 @@
-[gd_scene load_steps=18 format=4 uid="uid://fk34b1turgan"]
+[gd_scene load_steps=19 format=4 uid="uid://fk34b1turgan"]
 
 [ext_resource type="Script" uid="uid://b7sto4iec7u5u" path="res://scripts/game_controller.gd" id="1_dinhu"]
 [ext_resource type="Texture2D" uid="uid://cyg8wevfl4svr" path="res://textures/tile_map_atlas.png" id="1_uwrxv"]
 [ext_resource type="Texture2D" uid="uid://cinpnrr513wr2" path="res://sprites/robot.tres" id="2_yqjtg"]
 [ext_resource type="Texture2D" uid="uid://bq55lgedbtdt6" path="res://sprites/tool_panel.tres" id="3_gee14"]
 [ext_resource type="Script" uid="uid://c7m6c82vk8qyt" path="res://scripts/program_panel.gd" id="3_iywne"]
+[ext_resource type="Script" uid="uid://nmb8xc1k8428" path="res://scripts/camera_controller.gd" id="3_kvuet"]
 [ext_resource type="Texture2D" uid="uid://b7psmje3clsay" path="res://sprites/move_panel.tres" id="3_lbhrr"]
 [ext_resource type="Script" uid="uid://cm678lxkjw6qi" path="res://scripts/program_button.gd" id="4_lbhrr"]
 [ext_resource type="Texture2D" uid="uid://co2l1rrygn6s8" path="res://sprites/flip_panel.tres" id="6_u5sy4"]
@@ -41,19 +42,21 @@ scale = Vector2(1, 0.996736)
 tile_map_data = PackedByteArray("AAAAAP//AQAAAAAAAAABAP//AQAAAAAAAAACAP//AQAAAAAAAAADAP//AQAAAAAAAAAEAP//AQAAAAAAAAAFAP//AQAAAAAAAAAAAP7/AQAAAAAAAAAAAP3/AQAAAAAAAAAAAPz/AQAAAAAAAAAAAPv/AQAAAAAAAAAAAPr/AQAAAAAAAAAGAP//AQAAAAAAAAAHAP//AQAAAAAAAAAIAP//AQAAAAAAAAAJAP//AQAAAAAAAAAKAP//AQAAAAAAAAALAP//AQAAAAAAAAALAP7/AQAAAAAAAAALAPz/AQAAAAAAAAALAPv/AQAAAAAAAAALAP3/AQAAAAAAAAALAPr/AQAAAAAAAAAKAP7/AQABAAAAAAAJAP7/AQABAAAAAAAIAP7/AQABAAAAAAA=")
 tile_set = SubResource("TileSet_lnu2h")
 
+[node name="Camera2D" type="Camera2D" parent="World"]
+position = Vector2(72, -16.0524)
+zoom = Vector2(5, 5)
+script = ExtResource("3_kvuet")
+
 [node name="CharacterBody2D" type="CharacterBody2D" parent="World"]
-position = Vector2(26, -26)
+position = Vector2(24, -16.0524)
 
 [node name="Sprite2D" type="Sprite2D" parent="World/CharacterBody2D"]
-position = Vector2(-2, 3)
+position = Vector2(0, -7.04585)
 texture = ExtResource("2_yqjtg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="World/CharacterBody2D"]
-position = Vector2(-2, 2)
+position = Vector2(0, -8.04912)
 shape = SubResource("RectangleShape2D_lnu2h")
-
-[node name="Camera2D" type="Camera2D" parent="World"]
-zoom = Vector2(5, 5)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -196,6 +199,7 @@ theme_override_constants/separation = 30
 [node name="StartSpace" type="Control" parent="CanvasLayer/UI/ProgramScrollContainer/PanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(34.45, 120)
 layout_mode = 2
+mouse_filter = 2
 
 [node name="Label" type="Label" parent="CanvasLayer/UI/ProgramScrollContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2
@@ -205,6 +209,7 @@ text = "Program:"
 [node name="EndSpace" type="Control" parent="CanvasLayer/UI/ProgramScrollContainer/PanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(34.45, 0)
 layout_mode = 2
+mouse_filter = 2
 
 [node name="ControlBackground" type="NinePatchRect" parent="CanvasLayer/UI"]
 layout_mode = 2
