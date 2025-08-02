@@ -1,5 +1,6 @@
-[gd_scene load_steps=17 format=4 uid="uid://fk34b1turgan"]
+[gd_scene load_steps=18 format=4 uid="uid://fk34b1turgan"]
 
+[ext_resource type="Script" uid="uid://b7sto4iec7u5u" path="res://scripts/game_controller.gd" id="1_dinhu"]
 [ext_resource type="Texture2D" uid="uid://cyg8wevfl4svr" path="res://textures/tile_map_atlas.png" id="1_uwrxv"]
 [ext_resource type="Texture2D" uid="uid://cinpnrr513wr2" path="res://sprites/robot.tres" id="2_yqjtg"]
 [ext_resource type="Texture2D" uid="uid://bq55lgedbtdt6" path="res://sprites/tool_panel.tres" id="3_gee14"]
@@ -29,6 +30,9 @@ size = Vector2(16, 16)
 PanelContainer/styles/panel = SubResource("StyleBoxEmpty_0tnpc")
 
 [node name="Root" type="Node"]
+
+[node name="GameController" type="Node" parent="."]
+script = ExtResource("1_dinhu")
 
 [node name="World" type="Node2D" parent="."]
 scale = Vector2(1, 0.996736)
@@ -125,6 +129,7 @@ size_flags_vertical = 3
 texture = ExtResource("3_lbhrr")
 expand_mode = 4
 script = ExtResource("4_lbhrr")
+command = 1
 
 [node name="FlipCommand" type="TextureRect" parent="CanvasLayer/UI/ToolsScrollContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
@@ -133,6 +138,7 @@ size_flags_vertical = 3
 texture = ExtResource("6_u5sy4")
 expand_mode = 4
 script = ExtResource("4_lbhrr")
+command = 2
 
 [node name="JumpCommand" type="TextureRect" parent="CanvasLayer/UI/ToolsScrollContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
@@ -141,6 +147,7 @@ size_flags_vertical = 3
 texture = ExtResource("7_gee14")
 expand_mode = 4
 script = ExtResource("4_lbhrr")
+command = 3
 
 [node name="ProgramBackground" type="NinePatchRect" parent="CanvasLayer/UI"]
 layout_mode = 2
@@ -218,46 +225,17 @@ patch_margin_bottom = 9
 [node name="PlayButton" type="TextureButton" parent="CanvasLayer/UI"]
 layout_mode = 0
 offset_left = 1513.0
-offset_top = 878.0
+offset_top = 876.0
 offset_right = 1633.0
-offset_bottom = 998.0
+offset_bottom = 996.0
 texture_normal = ExtResource("10_kvpfn")
 stretch_mode = 0
 
 [node name="StopButton" type="TextureButton" parent="CanvasLayer/UI"]
 layout_mode = 0
 offset_left = 1725.0
-offset_top = 879.0
+offset_top = 877.0
 offset_right = 1845.0
-offset_bottom = 999.0
+offset_bottom = 997.0
 texture_normal = ExtResource("11_dinhu")
 stretch_mode = 0
-
-[node name="MoveCommand" type="TextureRect" parent="."]
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("3_lbhrr")
-expand_mode = 4
-script = ExtResource("4_lbhrr")
-
-[node name="MoveCommand" type="TextureRect" parent="MoveCommand"]
-layout_mode = 0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("3_lbhrr")
-expand_mode = 4
-script = ExtResource("4_lbhrr")
-
-[node name="MoveCommand2" type="TextureRect" parent="."]
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("3_lbhrr")
-expand_mode = 4
-script = ExtResource("4_lbhrr")
-
-[node name="MoveCommand3" type="TextureRect" parent="."]
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("3_lbhrr")
-expand_mode = 4
-script = ExtResource("4_lbhrr")
