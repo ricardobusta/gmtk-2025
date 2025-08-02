@@ -19,6 +19,7 @@ const TILE_SPIKE := "spike"
 var is_interrupted := false
 var is_playing := false
 
+var start_position: Vector2i
 var map: LevelController
 
 func _ready() -> void:
@@ -29,8 +30,8 @@ func _ready() -> void:
 		printerr("Need to boot from a map")
 		return
 		
-	var start_pos = map.local_to_map(map.start_position.position)
-	robot.global_position = map.map_to_local(start_pos)
+	start_position = map.map_to_local(map.local_to_map(map.start_position.position))
+	robot.global_position = start_position
 	map.start_position.queue_free()
 
 func set_map(tile_map: TileMapLayer) -> void:
@@ -71,6 +72,8 @@ func on_stop_button_clicked() -> void:
 		
 	print("Stop")
 	is_playing = false
+	robot.global_position = start_position
+	robot.scale = Vector2.ONE
 	stop_execution("Stop button clicked")
 
 func get_program_commands() -> Array[ProgramCommands.Command]:
@@ -95,9 +98,11 @@ func execute_command_move() -> void:
 #
 	if side_terrain == TILE_SOLID:
 		stop_execution("Hit wall in front")
+		return
 
 	if side_terrain == TILE_SPIKE:
 		stop_execution("Hit spike wall!")
+		return
 
 	var ground_terrain := map.get_terrain_at_tile(target_grid_pos - Vector2i.UP,
 		 	LevelController.TileSide.TOP)
