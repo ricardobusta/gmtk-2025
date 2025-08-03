@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
@@ -15,6 +17,8 @@ namespace Busta.LoopRacers
         [SerializeField] private Rigidbody carRbPrefab;
         [SerializeField] private Button quitButton;
         [SerializeField] private Canvas loadingCanvas;
+        [SerializeField] private TMP_Text midScreenText;
+
 
         [SerializeField] private float acceleration = 100f;
         [SerializeField] private float drag = 50f;
@@ -23,12 +27,13 @@ namespace Busta.LoopRacers
 
         [SerializeField] private int totalLaps = 15;
 
-
         [SerializeField] private float startOffset = 0.685f;
 
         [SerializeField] private PlayerUiGame playerUiTemplate;
         [SerializeField] private PlayerData[] players;
         [SerializeField] private Vector2[] dangerZones;
+
+        private bool _gameStarted = false;
 
         private void Awake()
         {
@@ -62,6 +67,41 @@ namespace Busta.LoopRacers
             });
 
             loadingCanvas.gameObject.SetActive(false);
+        }
+
+        private void Start()
+        {
+            StartSequence();
+        }
+
+        private async void StartSequence()
+        {
+            midScreenText.gameObject.SetActive(true);
+            midScreenText.text = "";
+
+            await Task.Delay(100);
+            midScreenText.gameObject.SetActive(true);
+
+            midScreenText.text = "3";
+            midScreenText.transform.localScale = Vector3.one;
+            await midScreenText.transform.DOScale(1.2f, 1f).AsyncWaitForCompletion();
+
+            midScreenText.text = "2";
+            midScreenText.transform.localScale = Vector3.one;
+            await midScreenText.transform.DOScale(1.2f, 1f).AsyncWaitForCompletion();
+
+            midScreenText.text = "1";
+            midScreenText.transform.localScale = Vector3.one;
+            await midScreenText.transform.DOScale(1.2f, 1f).AsyncWaitForCompletion();
+
+            midScreenText.text = "GO!";
+            midScreenText.transform.localScale = Vector3.one;
+
+            _gameStarted = true;
+
+            await Task.Delay(200);
+
+            midScreenText.gameObject.SetActive(false);
         }
 
         private void Update()
@@ -112,7 +152,7 @@ namespace Busta.LoopRacers
             {
                 if (!Enabled || _detachedState) return;
 
-                if (Input.GetKey(key) && !_finished)
+                if (Input.GetKey(key) && !_finished && raceController._gameStarted)
                 {
                     Speed += raceController.acceleration * Time.deltaTime;
                     Ui.UpdateButton(true);
@@ -153,6 +193,9 @@ namespace Busta.LoopRacers
                     if (Laps == raceController.totalLaps)
                     {
                         _finished = true;
+                        raceController.midScreenText.gameObject.SetActive(true);
+                        raceController.midScreenText.text = "FINISHED!";
+                        raceController._gameStarted = false;
                     }
                 }
 
