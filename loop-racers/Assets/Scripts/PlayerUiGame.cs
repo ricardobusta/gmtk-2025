@@ -7,6 +7,7 @@ namespace Busta.LoopRacers
 {
     public class PlayerUiGame : MonoBehaviour
     {
+        [SerializeField] private GameConfigs gameConfigs;
         [SerializeField] private TMP_Text playerLabel;
         [SerializeField] private TMP_Text positionLabel;
         [SerializeField] private TMP_Text keyLabelUp;
@@ -54,7 +55,7 @@ namespace Busta.LoopRacers
 
         public void UpdatePosition(int index)
         {
-            positionLabel.color = Constants.PositionColors[index];
+            positionLabel.color = gameConfigs.PositionColors[index];
             switch (index)
             {
                 case 0:

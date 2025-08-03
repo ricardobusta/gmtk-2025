@@ -770,7 +770,7 @@ GameObject:
   - component: {fileID: 512465711}
   - component: {fileID: 512465710}
   m_Layer: 5
-  m_Name: StartButton
+  m_Name: QuitButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -791,10 +791,10 @@ RectTransform:
   - {fileID: 1651523039}
   m_Father: {fileID: 1216540131}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -408}
-  m_SizeDelta: {x: 357.8, y: 105.7}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 213, y: -85}
+  m_SizeDelta: {x: 357.8, y: 105.70001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &512465710
 CanvasGroup:
@@ -984,6 +984,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 802e1fca6e7a46268f1750c390eb5452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameConfigs: {fileID: 11400000, guid: 6f7b824b1d9004d26957b4acf48b3b5e, type: 2}
   playerLabel: {fileID: 375960250}
   positionLabel: {fileID: 6022449}
   keyLabelUp: {fileID: 715522953}
@@ -1162,9 +1163,9 @@ RectTransform:
   - {fileID: 681381302}
   m_Father: {fileID: 1216540131}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -234}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 136}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &842893596
@@ -3063,6 +3064,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c1a386d9ff734fbab14347116940d6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameConfigs: {fileID: 11400000, guid: 6f7b824b1d9004d26957b4acf48b3b5e, type: 2}
   acceleration: 100
   drag: 50
   maxSpeed: 75
@@ -3087,6 +3089,7 @@ MonoBehaviour:
     spline: {fileID: 1379007680}
     key: 118
     offset: 1.45
+  quitButton: {fileID: 0}
 --- !u!1 &1614792783
 GameObject:
   m_ObjectHideFlags: 0
@@ -3219,7 +3222,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Start Race
+  m_text: Quit Race
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57f203d64b3854dbf8cad97def7fccf5, type: 2}
   m_sharedMaterial: {fileID: 2471165444347292162, guid: 57f203d64b3854dbf8cad97def7fccf5, type: 2}

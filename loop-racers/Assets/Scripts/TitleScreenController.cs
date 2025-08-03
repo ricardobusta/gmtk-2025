@@ -8,6 +8,7 @@ namespace Busta.LoopRacers
 {
     public class TitleScreenController : MonoBehaviour
     {
+        [SerializeField] private GameConfigs gameConfigs;
         [SerializeField] private PlayerUiTitle playerUiTemplate;
         [SerializeField] private Button startButton;
         [SerializeField] private CanvasGroup startCanvasGroup;
@@ -25,11 +26,11 @@ namespace Busta.LoopRacers
         {
             _keys = Enum.GetValues(typeof(KeyCode));
 
-            for (var i = 0; i < Constants.MaxPlayers; i++)
+            for (var i = 0; i < gameConfigs.MaxPlayers; i++)
             {
                 _playerUi[i] = Instantiate(playerUiTemplate, playerUiTemplate.transform.parent);
                 _playerUi[i].gameObject.name = $"Player {i + 1}";
-                _playerUi[i].SetPlayer($"P{i + 1}", Constants.PlayerColors[i]);
+                _playerUi[i].SetPlayer($"P{i + 1}", gameConfigs.PlayerColors[i]);
                 _playerUi[i].gameObject.SetActive(false);
             }
 
@@ -60,7 +61,7 @@ namespace Busta.LoopRacers
                     continue;
                 }
 
-                if (_players.Count < Constants.MaxPlayers)
+                if (_players.Count < gameConfigs.MaxPlayers)
                 {
                     _players.Add(keyCode);
                     RefreshPlayers();
@@ -76,7 +77,7 @@ namespace Busta.LoopRacers
 
         private void StartGame()
         {
-            for (var i = 0; i < Constants.MaxPlayers; i++)
+            for (var i = 0; i < gameConfigs.MaxPlayers; i++)
                 if (i < _players.Count)
                     PlayerPrefs.SetInt("player" + i, (int)_players[i]);
                 else
@@ -87,7 +88,7 @@ namespace Busta.LoopRacers
 
         private void RefreshPlayers()
         {
-            for (var index = 0; index < Constants.MaxPlayers; index++)
+            for (var index = 0; index < gameConfigs.MaxPlayers; index++)
                 if (index < _players.Count)
                 {
                     _playerUi[index].gameObject.SetActive(true);

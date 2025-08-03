@@ -1,12 +1,15 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
+using UnityEngine.UI;
 
 namespace Busta.LoopRacers
 {
     public class RaceController : MonoBehaviour
     {
+        [SerializeField] private GameConfigs gameConfigs;
         [SerializeField] private float acceleration = 50f;
         [SerializeField] private float drag = 25f;
         [SerializeField] private float maxSpeed = 50f;
@@ -19,6 +22,9 @@ namespace Busta.LoopRacers
 
         [SerializeField] private PlayerUiGame playerUiTemplate;
         [SerializeField] private PlayerData[] players;
+
+        [SerializeField] private Button quitButton;
+
 
         private void Awake()
         {
@@ -34,7 +40,7 @@ namespace Busta.LoopRacers
                     player.MeterToSplineUnit = 1.0f / player.spline.CalculateLength();
                     player.key = key;
                     player.Ui = Instantiate(playerUiTemplate, playerUiTemplate.transform.parent);
-                    player.Ui.Init(i + 1, dangerSpeed / maxSpeed, key.ToString(), Constants.PlayerColors[i]);
+                    player.Ui.Init(i + 1, dangerSpeed / maxSpeed, key.ToString(), gameConfigs.PlayerColors[i]);
                     player.Ui.UpdateLaps(player.Laps, totalLaps);
                 }
                 else
@@ -44,6 +50,8 @@ namespace Busta.LoopRacers
             }
 
             playerUiTemplate.gameObject.SetActive(false);
+
+            quitButton.onClick.AddListener(() => { SceneManager.LoadScene("HomeScreen"); });
         }
 
         private void Update()
