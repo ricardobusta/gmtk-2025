@@ -8,6 +8,8 @@ namespace DefaultNamespace
 {
     public class TitleScreenController : MonoBehaviour
     {
+        private const int MaxPlayers = 4;
+
         [SerializeField] private PlayerUiTitle playerUiTemplate;
         [SerializeField] private Button startButton;
         [SerializeField] private CanvasGroup startCanvasGroup;
@@ -16,8 +18,6 @@ namespace DefaultNamespace
         [SerializeField] private Button creditsButton;
         [SerializeField] private Button backButton;
 
-
-        private const int MaxPlayers = 4;
         private Array _keys;
         private readonly List<KeyCode> _players = new();
         private readonly PlayerUiTitle[] _playerUi = new PlayerUiTitle[4];
@@ -46,20 +46,33 @@ namespace DefaultNamespace
             startCanvasGroup.interactable = false;
             startCanvasGroup.alpha = 0.5f;
 
-            startButton.onClick.AddListener(() => { SceneManager.LoadScene("Gameplay"); });
-            creditsButton.onClick.AddListener(() =>
-            {
-                uiCanvas.gameObject.SetActive(false);
-                creditsCanvas.gameObject.SetActive(true);
-            });
-            backButton.onClick.AddListener(() =>
-            {
-                uiCanvas.gameObject.SetActive(true);
-                creditsCanvas.gameObject.SetActive(false);
-            });
+            startButton.onClick.AddListener(StartGame);
+            creditsButton.onClick.AddListener(() => ToggleScreens(false));
+            backButton.onClick.AddListener(() => ToggleScreens(true));
+            ToggleScreens(true);
+        }
 
-            uiCanvas.gameObject.SetActive(true);
-            creditsCanvas.gameObject.SetActive(false);
+        private void ToggleScreens(bool mainScreen)
+        {
+            uiCanvas.gameObject.SetActive(mainScreen);
+            creditsCanvas.gameObject.SetActive(!mainScreen);
+        }
+
+        private void StartGame()
+        {
+            for (var i = 0; i < MaxPlayers; i++)
+            {
+                if (i < _players.Count)
+                {
+                    PlayerPrefs.SetInt("player" + i, (int)_players[i]);
+                }
+                else
+                {
+                    PlayerPrefs.DeleteKey("player" + i);
+                }
+            }
+
+            SceneManager.LoadScene("Gameplay");
         }
 
         private void Update()

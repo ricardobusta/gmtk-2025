@@ -12,12 +12,18 @@ public class RaceController : MonoBehaviour
         public KeyCode key;
         public float offset;
 
+        [NonSerialized] public bool enabled;
         [NonSerialized] public float Speed;
         [NonSerialized] public float ParametricPosition;
         [NonSerialized] public float MeterToSplineUnit;
 
         public void OnUpdate(RaceController raceController)
         {
+            if (!enabled)
+            {
+                return;
+            }
+
             if (Input.GetKey(key))
             {
                 Speed += raceController.acceleration * Time.deltaTime;
@@ -45,15 +51,26 @@ public class RaceController : MonoBehaviour
     [SerializeField] private float maxSpeed = 100;
     [SerializeField] private float startOffset = 0.685f;
 
-
     [SerializeField] private PlayerData[] players;
 
     private void Start()
     {
-        foreach (var player in players)
+        for (var i = 0; i < players.Length; i++)
         {
-            player.ParametricPosition = startOffset;
-            player.MeterToSplineUnit = 1.0f / player.spline.CalculateLength();
+            var player = players[i];
+            var key = (KeyCode)PlayerPrefs.GetInt("player" + i, (int)KeyCode.None);
+            if (key != KeyCode.None)
+            {
+                player.enabled = true;
+                player.car.gameObject.SetActive(true);
+                player.ParametricPosition = startOffset;
+                player.MeterToSplineUnit = 1.0f / player.spline.CalculateLength();
+                player.key = key;
+            }
+            else
+            {
+                player.car.gameObject.SetActive(false);
+            }
         }
     }
 
