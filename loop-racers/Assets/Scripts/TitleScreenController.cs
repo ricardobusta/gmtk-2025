@@ -8,8 +8,6 @@ namespace Busta.LoopRacers
 {
     public class TitleScreenController : MonoBehaviour
     {
-        private const int MaxPlayers = 4;
-
         [SerializeField] private PlayerUiTitle playerUiTemplate;
         [SerializeField] private Button startButton;
         [SerializeField] private CanvasGroup startCanvasGroup;
@@ -17,15 +15,7 @@ namespace Busta.LoopRacers
         [SerializeField] private Canvas creditsCanvas;
         [SerializeField] private Button creditsButton;
         [SerializeField] private Button backButton;
-
-        private readonly Color[] _playerColors =
-        {
-            new(200f / 255f, 55f / 255f, 55f / 255f),
-            new(0f / 255f, 136f / 255f, 170f / 255f),
-            new(113f / 255f, 200f / 255f, 55f / 255f),
-            new(255f / 255f, 212f / 255f, 42f / 255f)
-        };
-
+        
         private readonly List<KeyCode> _players = new();
         private readonly PlayerUiTitle[] _playerUi = new PlayerUiTitle[4];
 
@@ -35,11 +25,11 @@ namespace Busta.LoopRacers
         {
             _keys = Enum.GetValues(typeof(KeyCode));
 
-            for (var i = 0; i < MaxPlayers; i++)
+            for (var i = 0; i < Constants.MaxPlayers; i++)
             {
                 _playerUi[i] = Instantiate(playerUiTemplate, playerUiTemplate.transform.parent);
                 _playerUi[i].gameObject.name = $"Player {i + 1}";
-                _playerUi[i].SetPlayer($"P{i + 1}", _playerColors[i]);
+                _playerUi[i].SetPlayer($"P{i + 1}", Constants.PlayerColors[i]);
                 _playerUi[i].gameObject.SetActive(false);
             }
 
@@ -70,7 +60,7 @@ namespace Busta.LoopRacers
                     continue;
                 }
 
-                if (_players.Count < MaxPlayers)
+                if (_players.Count < Constants.MaxPlayers)
                 {
                     _players.Add(keyCode);
                     RefreshPlayers();
@@ -86,7 +76,7 @@ namespace Busta.LoopRacers
 
         private void StartGame()
         {
-            for (var i = 0; i < MaxPlayers; i++)
+            for (var i = 0; i < Constants.MaxPlayers; i++)
                 if (i < _players.Count)
                     PlayerPrefs.SetInt("player" + i, (int)_players[i]);
                 else
@@ -97,7 +87,7 @@ namespace Busta.LoopRacers
 
         private void RefreshPlayers()
         {
-            for (var index = 0; index < MaxPlayers; index++)
+            for (var index = 0; index < Constants.MaxPlayers; index++)
                 if (index < _players.Count)
                 {
                     _playerUi[index].gameObject.SetActive(true);

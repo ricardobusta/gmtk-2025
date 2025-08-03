@@ -1123,7 +1123,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -168}
-  m_SizeDelta: {x: 1434.2, y: 173.4}
+  m_SizeDelta: {x: 1195.53, y: 173.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &569188973
 MonoBehaviour:
@@ -1145,10 +1145,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '"Raving Energy (faster)", "In a Heartbeat" Kevin MacLeod (incompetech.com)
+  m_text: '"Raving Energy (faster)", "In a Heartbeat", "Eighties Action", Kevin MacLeod
+    (incompetech.com)
 
-    Licensed
-    under Creative Commons: By Attribution 4.0 License
+    Licensed under Creative Commons: By Attribution 4.0 License
 
     http://creativecommons.org/licenses/by/4.0/'
   m_isRightToLeft: 0

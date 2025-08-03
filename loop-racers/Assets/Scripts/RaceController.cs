@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -6,15 +7,20 @@ namespace Busta.LoopRacers
 {
     public class RaceController : MonoBehaviour
     {
-        [SerializeField] private float acceleration = 5.0f;
-        [SerializeField] private float drag = 10.0f;
-        [SerializeField] private float maxSpeed = 100;
+        [SerializeField] private float acceleration = 50f;
+        [SerializeField] private float drag = 25f;
+        [SerializeField] private float maxSpeed = 50f;
+        [SerializeField] private float dangerSpeed = 40f;
+
+        [SerializeField] private int totalLaps = 15;
+
+
         [SerializeField] private float startOffset = 0.685f;
 
         [SerializeField] private PlayerUiGame playerUiTemplate;
         [SerializeField] private PlayerData[] players;
 
-        private void Start()
+        private void Awake()
         {
             for (var i = 0; i < players.Length; i++)
             {
@@ -22,13 +28,14 @@ namespace Busta.LoopRacers
                 var key = (KeyCode)PlayerPrefs.GetInt("player" + i, (int)KeyCode.None);
                 if (key != KeyCode.None)
                 {
-                    player.enabled = true;
+                    player.Enabled = true;
                     player.car.gameObject.SetActive(true);
                     player.ParametricPosition = startOffset;
                     player.MeterToSplineUnit = 1.0f / player.spline.CalculateLength();
                     player.key = key;
-                    var ui = Instantiate(playerUiTemplate, playerUiTemplate.transform.parent);
-                    ui.gameObject.SetActive(true);
+                    player.Ui = Instantiate(playerUiTemplate, playerUiTemplate.transform.parent);
+                    player.Ui.Init(i + 1, dangerSpeed / maxSpeed, key.ToString(), Constants.PlayerColors[i]);
+                    player.Ui.UpdateLaps(player.Laps, totalLaps);
                 }
                 else
                 {
@@ -42,6 +49,16 @@ namespace Busta.LoopRacers
         private void Update()
         {
             foreach (var player in players) player.OnUpdate(this);
+            players = players.OrderByDescending(player => player.Laps + player.ParametricPosition).ToArray();
+            for (var index = 0; index < players.Length; index++)
+            {
+                if (!players[index].Enabled)
+                {
+                    continue;
+                }
+
+                players[index].Ui.UpdatePosition(index);
+            }
         }
 
         [Serializable]
@@ -52,24 +69,46 @@ namespace Busta.LoopRacers
             public KeyCode key;
             public float offset;
 
-            [NonSerialized] public bool enabled;
+            [NonSerialized] public bool Enabled;
             [NonSerialized] public float MeterToSplineUnit;
             [NonSerialized] public float ParametricPosition;
+            [NonSerialized] public int Laps;
             [NonSerialized] public float Speed;
+            [NonSerialized] public PlayerUiGame Ui;
+
+            private bool _finished;
 
             public void OnUpdate(RaceController raceController)
             {
-                if (!enabled) return;
+                if (!Enabled) return;
 
-                if (Input.GetKey(key))
+                if (Input.GetKey(key) && !_finished)
+                {
                     Speed += raceController.acceleration * Time.deltaTime;
+                    Ui.UpdateButton(true);
+                }
                 else
+                {
                     Speed -= raceController.drag * Time.deltaTime;
+                    Ui.UpdateButton(false);
+                }
 
                 Speed = Mathf.Clamp(Speed, 0, raceController.maxSpeed);
 
+                Ui.UpdateSpeed(Speed / raceController.maxSpeed);
+
                 ParametricPosition += MeterToSplineUnit * Speed * Time.deltaTime;
-                ParametricPosition %= 1.0f;
+
+                if (ParametricPosition > 1.0f)
+                {
+                    Laps += 1;
+                    ParametricPosition %= 1.0f;
+                    Ui.UpdateLaps(Laps, raceController.totalLaps);
+                    if (Laps == raceController.totalLaps)
+                    {
+                        _finished = true;
+                    }
+                }
 
                 car.transform.position = spline.EvaluatePosition(ParametricPosition);
                 var splineTan = spline.EvaluateTangent(ParametricPosition);
