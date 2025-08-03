@@ -8,8 +8,9 @@ namespace DefaultNamespace
     [ExecuteInEditMode]
     public class SplineDebug : MonoBehaviour
     {
-        [SerializeField] private GameObject car;
+        [SerializeField] private GameObject carPrefab;
         [SerializeField] private SplineContainer spline;
+        [SerializeField] private float offset;
 
         private readonly List<GameObject> cars = new();
 
@@ -25,14 +26,14 @@ namespace DefaultNamespace
 
             cars.Clear();
 
-            if (!car || !spline)
+            if (!carPrefab || !spline)
             {
                 return;
             }
 
             for (var i = 0; i < 100; i++)
             {
-                var newCar = Instantiate(car, transform);
+                var newCar = Instantiate(carPrefab, transform);
                 newCar.name = $"Car {i}";
                 cars.Add(newCar);
             }
@@ -61,6 +62,7 @@ namespace DefaultNamespace
                     var splineTan = spline.EvaluateTangent(t);
                     var tan = new Vector3(splineTan.x, splineTan.y, splineTan.z);
                     c.transform.LookAt(c.transform.position + tan, Vector3.up);
+                    c.transform.position += c.transform.right * offset;
                 }
             }
         }

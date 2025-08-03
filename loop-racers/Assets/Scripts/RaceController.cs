@@ -26,7 +26,7 @@ public class RaceController : MonoBehaviour
             {
                 Speed -= raceController.drag * Time.deltaTime;
             }
-            
+
             Speed = Mathf.Clamp(Speed, 0, raceController.maxSpeed);
 
             ParametricPosition += MeterToSplineUnit * Speed * Time.deltaTime;
@@ -43,7 +43,8 @@ public class RaceController : MonoBehaviour
     [SerializeField] private float acceleration = 5.0f;
     [SerializeField] private float drag = 10.0f;
     [SerializeField] private float maxSpeed = 100;
-    [SerializeField] private float offset = 0;
+    [SerializeField] private float startOffset = 0.685f;
+
 
     [SerializeField] private PlayerData[] players;
 
@@ -51,7 +52,7 @@ public class RaceController : MonoBehaviour
     {
         foreach (var player in players)
         {
-            player.ParametricPosition = 0;
+            player.ParametricPosition = startOffset;
             player.MeterToSplineUnit = 1.0f / player.spline.CalculateLength();
         }
     }
