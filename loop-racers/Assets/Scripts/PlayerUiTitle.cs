@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace DefaultNamespace
+namespace Busta.LoopRacers
 {
     public class PlayerUiTitle : MonoBehaviour
     {

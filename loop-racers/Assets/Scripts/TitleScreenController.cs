@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace DefaultNamespace
+namespace Busta.LoopRacers
 {
     public class TitleScreenController : MonoBehaviour
     {
@@ -18,17 +18,18 @@ namespace DefaultNamespace
         [SerializeField] private Button creditsButton;
         [SerializeField] private Button backButton;
 
-        private Array _keys;
-        private readonly List<KeyCode> _players = new();
-        private readonly PlayerUiTitle[] _playerUi = new PlayerUiTitle[4];
-
         private readonly Color[] _playerColors =
         {
             new(200f / 255f, 55f / 255f, 55f / 255f),
             new(0f / 255f, 136f / 255f, 170f / 255f),
             new(113f / 255f, 200f / 255f, 55f / 255f),
-            new(255f / 255f, 212f / 255f, 42f / 255f),
+            new(255f / 255f, 212f / 255f, 42f / 255f)
         };
+
+        private readonly List<KeyCode> _players = new();
+        private readonly PlayerUiTitle[] _playerUi = new PlayerUiTitle[4];
+
+        private Array _keys;
 
         private void Awake()
         {
@@ -52,43 +53,15 @@ namespace DefaultNamespace
             ToggleScreens(true);
         }
 
-        private void ToggleScreens(bool mainScreen)
-        {
-            uiCanvas.gameObject.SetActive(mainScreen);
-            creditsCanvas.gameObject.SetActive(!mainScreen);
-        }
-
-        private void StartGame()
-        {
-            for (var i = 0; i < MaxPlayers; i++)
-            {
-                if (i < _players.Count)
-                {
-                    PlayerPrefs.SetInt("player" + i, (int)_players[i]);
-                }
-                else
-                {
-                    PlayerPrefs.DeleteKey("player" + i);
-                }
-            }
-
-            SceneManager.LoadScene("Gameplay");
-        }
-
         private void Update()
         {
             foreach (KeyCode keyCode in _keys)
             {
-                if (!Input.GetKeyDown(keyCode))
-                {
-                    continue;
-                }
+                if (!Input.GetKeyDown(keyCode)) continue;
 
                 if (keyCode is >= KeyCode.WheelUp and <= KeyCode.Mouse6)
-                {
                     // ignore mouse inputs
                     continue;
-                }
 
                 if (_players.Contains(keyCode))
                 {
@@ -105,10 +78,26 @@ namespace DefaultNamespace
             }
         }
 
+        private void ToggleScreens(bool mainScreen)
+        {
+            uiCanvas.gameObject.SetActive(mainScreen);
+            creditsCanvas.gameObject.SetActive(!mainScreen);
+        }
+
+        private void StartGame()
+        {
+            for (var i = 0; i < MaxPlayers; i++)
+                if (i < _players.Count)
+                    PlayerPrefs.SetInt("player" + i, (int)_players[i]);
+                else
+                    PlayerPrefs.DeleteKey("player" + i);
+
+            SceneManager.LoadScene("Gameplay");
+        }
+
         private void RefreshPlayers()
         {
             for (var index = 0; index < MaxPlayers; index++)
-            {
                 if (index < _players.Count)
                 {
                     _playerUi[index].gameObject.SetActive(true);
@@ -118,7 +107,6 @@ namespace DefaultNamespace
                 {
                     _playerUi[index].gameObject.SetActive(false);
                 }
-            }
 
             startCanvasGroup.interactable = _players.Count > 0;
             startCanvasGroup.alpha = _players.Count > 0 ? 1.0f : 0.5f;

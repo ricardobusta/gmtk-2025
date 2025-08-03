@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace DefaultNamespace
+namespace Busta.LoopRacers
 {
     [ExecuteInEditMode]
     public class SplineDebug : MonoBehaviour
@@ -14,22 +13,30 @@ namespace DefaultNamespace
 
         private readonly List<GameObject> cars = new();
 
+        private void Update()
+        {
+            if (cars.Count > 1)
+                for (var index = 0; index < cars.Count; index++)
+                {
+                    var t = index / (1.0f * (cars.Count - 1));
+                    var c = cars[index];
+                    c.transform.position = spline.EvaluatePosition(t);
+                    var splineTan = spline.EvaluateTangent(t);
+                    var tan = new Vector3(splineTan.x, splineTan.y, splineTan.z);
+                    c.transform.LookAt(c.transform.position + tan, Vector3.up);
+                    c.transform.position += c.transform.right * offset;
+                }
+        }
+
         private void OnEnable()
         {
             if (cars.Count > 0)
-            {
                 foreach (var car in cars)
-                {
                     DestroyImmediate(car);
-                }
-            }
 
             cars.Clear();
 
-            if (!carPrefab || !spline)
-            {
-                return;
-            }
+            if (!carPrefab || !spline) return;
 
             for (var i = 0; i < 100; i++)
             {
@@ -42,29 +49,8 @@ namespace DefaultNamespace
         private void OnDisable()
         {
             if (cars.Count > 0)
-            {
                 foreach (var car in cars)
-                {
                     DestroyImmediate(car);
-                }
-            }
-        }
-
-        private void Update()
-        {
-            if (cars.Count > 1)
-            {
-                for (var index = 0; index < cars.Count; index++)
-                {
-                    var t = index / (1.0f * (cars.Count - 1));
-                    var c = cars[index];
-                    c.transform.position = spline.EvaluatePosition(t);
-                    var splineTan = spline.EvaluateTangent(t);
-                    var tan = new Vector3(splineTan.x, splineTan.y, splineTan.z);
-                    c.transform.LookAt(c.transform.position + tan, Vector3.up);
-                    c.transform.position += c.transform.right * offset;
-                }
-            }
         }
     }
 }
