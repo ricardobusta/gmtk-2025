@@ -9,6 +9,8 @@ namespace Busta.LoopRacers
     public class TitleScreenController : MonoBehaviour
     {
         [SerializeField] private GameConfigs gameConfigs;
+        [SerializeField] private Canvas loadingCanvas;
+        
         [SerializeField] private PlayerUiTitle playerUiTemplate;
         [SerializeField] private Button startButton;
         [SerializeField] private CanvasGroup startCanvasGroup;
@@ -42,6 +44,7 @@ namespace Busta.LoopRacers
             creditsButton.onClick.AddListener(() => ToggleScreens(false));
             backButton.onClick.AddListener(() => ToggleScreens(true));
             ToggleScreens(true);
+            loadingCanvas.gameObject.SetActive(false);
         }
 
         private void Update()
@@ -83,6 +86,7 @@ namespace Busta.LoopRacers
                 else
                     PlayerPrefs.DeleteKey("player" + i);
 
+            loadingCanvas.gameObject.SetActive(true);
             SceneManager.LoadScene("Gameplay");
         }
 

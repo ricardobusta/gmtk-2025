@@ -1,19 +1,25 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace Busta.LoopRacers
 {
     public class RaceController : MonoBehaviour
     {
         [SerializeField] private GameConfigs gameConfigs;
-        [SerializeField] private float acceleration = 50f;
-        [SerializeField] private float drag = 25f;
-        [SerializeField] private float maxSpeed = 50f;
-        [SerializeField] private float dangerSpeed = 40f;
+        [SerializeField] private Rigidbody carRbPrefab;
+        [SerializeField] private Button quitButton;
+        [SerializeField] private Canvas loadingCanvas;
+
+        [SerializeField] private float acceleration = 100f;
+        [SerializeField] private float drag = 50f;
+        [SerializeField] private float maxSpeed = 75f;
+        [SerializeField] private float dangerSpeed = 70f;
 
         [SerializeField] private int totalLaps = 15;
 
@@ -22,9 +28,7 @@ namespace Busta.LoopRacers
 
         [SerializeField] private PlayerUiGame playerUiTemplate;
         [SerializeField] private PlayerData[] players;
-
-        [SerializeField] private Button quitButton;
-
+        [SerializeField] private Vector2[] dangerZones;
 
         private void Awake()
         {
@@ -51,7 +55,13 @@ namespace Busta.LoopRacers
 
             playerUiTemplate.gameObject.SetActive(false);
 
-            quitButton.onClick.AddListener(() => { SceneManager.LoadScene("HomeScreen"); });
+            quitButton.onClick.AddListener(() =>
+            {
+                loadingCanvas.gameObject.SetActive(true);
+                SceneManager.LoadScene("HomeScreen");
+            });
+
+            loadingCanvas.gameObject.SetActive(false);
         }
 
         private void Update()
@@ -66,6 +76,17 @@ namespace Busta.LoopRacers
                 }
 
                 players[index].Ui.UpdatePosition(index);
+            }
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            foreach (var dangerZone in dangerZones)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(players[0].spline.EvaluatePosition(dangerZone.x), 0.5f);
+                Gizmos.color = Color.green;
+                Gizmos.DrawSphere(players[0].spline.EvaluatePosition(dangerZone.y), 0.5f);
             }
         }
 
@@ -85,10 +106,11 @@ namespace Busta.LoopRacers
             [NonSerialized] public PlayerUiGame Ui;
 
             private bool _finished;
+            private bool _detachedState;
 
             public void OnUpdate(RaceController raceController)
             {
-                if (!Enabled) return;
+                if (!Enabled || _detachedState) return;
 
                 if (Input.GetKey(key) && !_finished)
                 {
@@ -107,6 +129,22 @@ namespace Busta.LoopRacers
 
                 ParametricPosition += MeterToSplineUnit * Speed * Time.deltaTime;
 
+                // if position in the spline is danger zone && speed is above danger speed
+                if (Speed > raceController.dangerSpeed)
+                {
+                    foreach (var dangerZone in raceController.dangerZones)
+                    {
+                        if (ParametricPosition > dangerZone.x && ParametricPosition < dangerZone.y)
+                        {
+                            if (Random.Range(0f, 1f) < 0.1f) // 10% chance to detach
+                            {
+                                DetachedRoutine(raceController.carRbPrefab);
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 if (ParametricPosition > 1.0f)
                 {
                     Laps += 1;
@@ -123,6 +161,30 @@ namespace Busta.LoopRacers
                 var tan = new Vector3(splineTan.x, splineTan.y, splineTan.z);
                 car.transform.LookAt(car.transform.position + tan, Vector3.up);
                 car.transform.position += car.transform.right * offset;
+            }
+
+            public async void DetachedRoutine(Rigidbody rbPrefab)
+            {
+                _detachedState = true;
+                Speed = 0;
+                var rb = Instantiate(rbPrefab);
+                rb.transform.position = car.transform.position;
+                rb.transform.rotation = car.transform.rotation;
+                car.transform.SetParent(rb.transform);
+                rb.AddForce(rb.transform.TransformDirection(0, 5, 12), ForceMode.Impulse);
+                rb.AddTorque(Vector3.up * 2, ForceMode.Impulse);
+
+                await Task.Delay(1000);
+
+                car.transform.SetParent(null);
+                car.transform.position = spline.EvaluatePosition(ParametricPosition);
+                var splineTan = spline.EvaluateTangent(ParametricPosition);
+                var tan = new Vector3(splineTan.x, splineTan.y, splineTan.z);
+                car.transform.LookAt(car.transform.position + tan, Vector3.up);
+                car.transform.position += car.transform.right * offset;
+                Destroy(rb.gameObject);
+
+                _detachedState = false;
             }
         }
     }

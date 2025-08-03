@@ -47,6 +47,7 @@ namespace Busta.LoopRacers
             if (current == total)
             {
                 lapLabel.text = "Finished!";
+                lapLabel.color = Color.yellow;
                 return;
             }
 
