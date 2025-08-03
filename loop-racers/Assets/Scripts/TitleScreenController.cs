@@ -10,7 +10,7 @@ namespace Busta.LoopRacers
     {
         [SerializeField] private GameConfigs gameConfigs;
         [SerializeField] private Canvas loadingCanvas;
-        
+
         [SerializeField] private PlayerUiTitle playerUiTemplate;
         [SerializeField] private Button startButton;
         [SerializeField] private CanvasGroup startCanvasGroup;
@@ -18,7 +18,7 @@ namespace Busta.LoopRacers
         [SerializeField] private Canvas creditsCanvas;
         [SerializeField] private Button creditsButton;
         [SerializeField] private Button backButton;
-        
+
         private readonly List<KeyCode> _players = new();
         private readonly PlayerUiTitle[] _playerUi = new PlayerUiTitle[4];
 
@@ -82,9 +82,10 @@ namespace Busta.LoopRacers
         {
             for (var i = 0; i < gameConfigs.MaxPlayers; i++)
                 if (i < _players.Count)
-                    PlayerPrefs.SetInt("player" + i, (int)_players[i]);
+                    StaticData.SetValue("player" + i, (int)_players[i]);
                 else
-                    PlayerPrefs.DeleteKey("player" + i);
+                    StaticData.DeleteValue("player" + i);
+
 
             loadingCanvas.gameObject.SetActive(true);
             SceneManager.LoadScene("Gameplay");

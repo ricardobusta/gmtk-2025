@@ -35,12 +35,13 @@ namespace Busta.LoopRacers
 
         private bool _gameStarted = false;
 
-        private void Awake()
+        private void Start()
         {
+            Debug.LogWarning("Will start!");
             for (var i = 0; i < players.Length; i++)
             {
                 var player = players[i];
-                var key = (KeyCode)PlayerPrefs.GetInt("player" + i, (int)KeyCode.None);
+                var key = (KeyCode)StaticData.GetValue("player" + i, (int)KeyCode.None);
                 if (key != KeyCode.None)
                 {
                     player.Enabled = true;
@@ -67,15 +68,16 @@ namespace Busta.LoopRacers
             });
 
             loadingCanvas.gameObject.SetActive(false);
-        }
-
-        private void Start()
-        {
+            
+            Debug.LogWarning("Start!");
+            // _gameStarted = true;
+            // midScreenText.gameObject.SetActive(false);
             StartSequence();
         }
-
+        
         private async void StartSequence()
         {
+            Debug.LogWarning("Start sequence!");
             midScreenText.gameObject.SetActive(true);
             midScreenText.text = "";
 
@@ -102,6 +104,7 @@ namespace Busta.LoopRacers
             await Task.Delay(200);
 
             midScreenText.gameObject.SetActive(false);
+            Debug.LogWarning("Finished!");
         }
 
         private void Update()
