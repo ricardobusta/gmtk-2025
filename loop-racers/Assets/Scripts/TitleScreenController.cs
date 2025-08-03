@@ -11,6 +11,11 @@ namespace DefaultNamespace
         [SerializeField] private PlayerUiTitle playerUiTemplate;
         [SerializeField] private Button startButton;
         [SerializeField] private CanvasGroup startCanvasGroup;
+        [SerializeField] private Canvas uiCanvas;
+        [SerializeField] private Canvas creditsCanvas;
+        [SerializeField] private Button creditsButton;
+        [SerializeField] private Button backButton;
+
 
         private const int MaxPlayers = 4;
         private Array _keys;
@@ -42,6 +47,19 @@ namespace DefaultNamespace
             startCanvasGroup.alpha = 0.5f;
 
             startButton.onClick.AddListener(() => { SceneManager.LoadScene("Gameplay"); });
+            creditsButton.onClick.AddListener(() =>
+            {
+                uiCanvas.gameObject.SetActive(false);
+                creditsCanvas.gameObject.SetActive(true);
+            });
+            backButton.onClick.AddListener(() =>
+            {
+                uiCanvas.gameObject.SetActive(true);
+                creditsCanvas.gameObject.SetActive(false);
+            });
+
+            uiCanvas.gameObject.SetActive(true);
+            creditsCanvas.gameObject.SetActive(false);
         }
 
         private void Update()
