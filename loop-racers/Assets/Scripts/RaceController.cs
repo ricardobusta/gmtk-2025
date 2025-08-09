@@ -68,43 +68,60 @@ namespace Busta.LoopRacers
             });
 
             loadingCanvas.gameObject.SetActive(false);
-            
+
             Debug.LogWarning("Start!");
             // _gameStarted = true;
             // midScreenText.gameObject.SetActive(false);
             StartSequence();
         }
-        
-        private async void StartSequence()
+
+        private void StartSequence()
         {
-            Debug.LogWarning("Start sequence!");
-            midScreenText.gameObject.SetActive(true);
-            midScreenText.text = "";
+            var sequence = DOTween.Sequence();
 
-            await Task.Delay(100);
-            midScreenText.gameObject.SetActive(true);
+            sequence.AppendCallback(() =>
+            {
+                midScreenText.gameObject.SetActive(true);
+                midScreenText.text = "";
+            });
 
-            midScreenText.text = "3";
-            midScreenText.transform.localScale = Vector3.one;
-            await midScreenText.transform.DOScale(1.2f, 1f).AsyncWaitForCompletion();
+            sequence.AppendInterval(0.1f);
 
-            midScreenText.text = "2";
-            midScreenText.transform.localScale = Vector3.one;
-            await midScreenText.transform.DOScale(1.2f, 1f).AsyncWaitForCompletion();
+            sequence.AppendCallback(() =>
+            {
+                midScreenText.gameObject.SetActive(true);
+                midScreenText.text = "3";
+                midScreenText.transform.localScale = Vector3.one;
+            });
 
-            midScreenText.text = "1";
-            midScreenText.transform.localScale = Vector3.one;
-            await midScreenText.transform.DOScale(1.2f, 1f).AsyncWaitForCompletion();
+            sequence.Append(midScreenText.transform.DOScale(1.2f, 1f));
 
-            midScreenText.text = "GO!";
-            midScreenText.transform.localScale = Vector3.one;
+            sequence.AppendCallback(() =>
+            {
+                midScreenText.text = "2";
+                midScreenText.transform.localScale = Vector3.one;
+            });
 
-            _gameStarted = true;
+            sequence.Append(midScreenText.transform.DOScale(1.2f, 1f));
 
-            await Task.Delay(200);
+            sequence.AppendCallback(() =>
+            {
+                midScreenText.text = "1";
+                midScreenText.transform.localScale = Vector3.one;
+            });
 
-            midScreenText.gameObject.SetActive(false);
-            Debug.LogWarning("Finished!");
+            sequence.Append(midScreenText.transform.DOScale(1.2f, 1f));
+
+            sequence.AppendCallback(() =>
+            {
+                midScreenText.text = "GO!";
+                midScreenText.transform.localScale = Vector3.one;
+                _gameStarted = true;
+            });
+
+            sequence.AppendInterval(0.2f);
+
+            sequence.AppendCallback(() => { midScreenText.gameObject.SetActive(false); });
         }
 
         private void Update()
@@ -209,7 +226,7 @@ namespace Busta.LoopRacers
                 car.transform.position += car.transform.right * offset;
             }
 
-            public async void DetachedRoutine(Rigidbody rbPrefab)
+            public void DetachedRoutine(Rigidbody rbPrefab)
             {
                 _detachedState = true;
                 Speed = 0;
@@ -220,17 +237,18 @@ namespace Busta.LoopRacers
                 rb.AddForce(rb.transform.TransformDirection(0, 5, 12), ForceMode.Impulse);
                 rb.AddTorque(Vector3.up * 2, ForceMode.Impulse);
 
-                await Task.Delay(1000);
+                DOVirtual.DelayedCall(1f, () =>
+                {
+                    car.transform.SetParent(null);
+                    car.transform.position = spline.EvaluatePosition(ParametricPosition);
+                    var splineTan = spline.EvaluateTangent(ParametricPosition);
+                    var tan = new Vector3(splineTan.x, splineTan.y, splineTan.z);
+                    car.transform.LookAt(car.transform.position + tan, Vector3.up);
+                    car.transform.position += car.transform.right * offset;
+                    Destroy(rb.gameObject);
 
-                car.transform.SetParent(null);
-                car.transform.position = spline.EvaluatePosition(ParametricPosition);
-                var splineTan = spline.EvaluateTangent(ParametricPosition);
-                var tan = new Vector3(splineTan.x, splineTan.y, splineTan.z);
-                car.transform.LookAt(car.transform.position + tan, Vector3.up);
-                car.transform.position += car.transform.right * offset;
-                Destroy(rb.gameObject);
-
-                _detachedState = false;
+                    _detachedState = false;
+                });
             }
         }
     }
